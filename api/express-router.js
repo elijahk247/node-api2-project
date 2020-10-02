@@ -19,7 +19,7 @@ router.get('/', (req, res) => {
 router.get('/:id', (req, res) => {
   Posts.findById(req.params.id)
     .then(post => {
-      if(post === 0) {
+      if(post == 0) {
         res.status(404).json({ message: 'The post with the specified ID does not exist'});
       } else {
         res.status(200).json({ message: 'The requested post: ', request: post });
@@ -29,5 +29,21 @@ router.get('/:id', (req, res) => {
       res.status(500).json({ error: 'The post information could not be retrieved' });
     })
 })
+
+// GET request /api/posts/:id/comments
+router.get('/:id/comments', (req, res) => {
+  Posts.findById(req.params.id)
+    .then(post => {
+      if(post != 0) {
+        res.status(200).json({ comment: post})
+      } else {
+        res.status(404).json({ message: 'The post with the specified ID does not exist' });
+      }
+    })
+    .catch(err => {
+      res.status(500).json({ error: 'The post information could not be retrieved' });
+    })
+})
+
 
 module.exports = router;
