@@ -45,5 +45,22 @@ router.get('/:id/comments', (req, res) => {
     })
 })
 
+//POST request /api/posts
+router.post('/', (req, res) => {
+  const data = req.body;
+
+  if(data.title === undefined || data.contents === undefined) {
+    res.status(400).json({ errorMessage: 'Please provide the title and contents for the post' });
+  } else {
+    Posts.insert(req.body)
+      .then(post => {
+        res.status(201).json({ resource: post});
+      })
+      .catch(err => {
+        res.status(500).json({ error: 'There was an error while saving the post to the server' });
+      })
+  }
+})
+
 
 module.exports = router;
