@@ -47,19 +47,47 @@ router.get('/:id/comments', (req, res) => {
 
 //POST request /api/posts
 router.post('/', (req, res) => {
-  const data = req.body;
-
-  if(data.title === undefined || data.contents === undefined) {
+  if(!req.body.title || !req.body.contents) {
     res.status(400).json({ errorMessage: 'Please provide the title and contents for the post' });
-  } else {
-    Posts.insert(req.body)
-      .then(post => {
-        res.status(201).json({ resource: post});
-      })
-      .catch(err => {
-        res.status(500).json({ error: 'There was an error while saving the post to the server' });
-      })
   }
+
+  Posts.insert(req.body)
+    .then(post => {
+      res.status(201).json(post);
+    })
+    .catch(err => {
+      res.status(500).json({ error: 'There was an error while saving the post to the server' });
+    })
+})
+
+// DELETE request /api/posts
+router.delete('/:id', (req, res) => {
+  Posts.findById(req.params.id)
+    .then(post => {
+      const deletedPost = post;
+      if(post != 0) {
+        Posts.remove(req.params.id)
+          .then(post => {
+            res.status(200).json({ deletedPost })
+          })
+      } else {
+        res.status(404).json({ message: 'The post with the specified ID could not be found' });
+      }
+    })
+    .catch(err => {
+      res.status(500).json({ error: 'The post could not be removed'})
+    })
+  // Posts.remove(req.params.id)
+  //   .then(post => {
+  //     if(post !=0) {
+  //       res.status(200).json({ message: 'Successfully deleted' })
+  //     } else {
+  //       res.status(404).json({ message: 'The post with the specified ID does not exist' });
+  //     }
+  //   })
+  //   .catch(err => {
+  //     res.status(500).json({ error: 'The post could not be removed' });
+  //   })
 })
 
 
